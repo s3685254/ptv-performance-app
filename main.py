@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # [START gae_python37_app]
-from flask import Flask, render_template
+from flask import Flask
 
 from google.cloud import datastore
 
@@ -153,8 +153,8 @@ def hello():
 	stops = datastore_client.query(kind='stop').fetch()
 	avg_delays = {}
 	for i in stops:
-		avg_delays[i["name"]] = getAverageDelay(i["id"])
-	return render_template("index.html", stops=stops, avg_delays=avg_delays)
+		avg_delays[i["id"]] = getAverageDelay(i["id"])
+	return render_template("index.html", stops, avg_delays)
 
 
 if __name__ == '__main__':
@@ -166,6 +166,7 @@ if __name__ == '__main__':
 	
 	#print(getAverageDelay(1057))
 	#monitorServices()
+	
 	
 	app.run(host='127.0.0.1', port=8080, debug=True)
 # [END gae_python37_app]

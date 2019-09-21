@@ -1,6 +1,8 @@
-<h2>Average Delays by Train Station</h2>
+{% extends "layout.html" %} {%block head %} {% block title %}Average Delays by
+Train Station{% endblock %}
+{{ super() }}
+{% endblock %} {% block content %}
 <!-- key is station name, value is average delay time -->
-Station Name | Average Delay in Minutes<br>
-  {% for key, value in avg_delays.items() %}
-	{{key}} | {{value}}<br>
-{% endfor %}
+Station Name | Average Delay in Minutes<br />
+{% for key, value in avg_delays.items() %} {{ key }} | {{ value }}<br />
+{% endfor %} {% endblock %}

@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{%block head %} 
+	{% block title %}
+		<h2>{{station_name}}</h2>
+	{% endblock %}
+{{ super() }}
+{% endblock %} 
+
+{% block content %}
+	{{ dateline|safe }}
+{% endblock %}

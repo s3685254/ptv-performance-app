@@ -14,20 +14,30 @@
 
 # [START gae_python37_app]
 from flask import Flask, render_template
+from pytz import timezone
+import pygal
+
+from itertools import groupby
+from operator import attrgetter
 
 from google.cloud import datastore
 
 from time import sleep
+import time
 
 import requests
-from datetime import datetime
+from datetime import datetime, time
 from dateutil import tz
 from hashlib import sha1
 import hmac
 import binascii
 import threading
 
+
 datastore_client = datastore.Client()
+
+localtz = timezone("Australia/Melbourne")
+
 
 # PTV API STUFF
 def getUrl(request):
@@ -44,12 +54,16 @@ to_zone = tz.gettz('Australia/Melbourne')
 
 
 def store_stop(id, name):
-	entity = datastore.Entity(key=datastore_client.key('stop'))
+	key = datastore_client.key('stop', str(id))
+	entity = datastore.Entity(key)
 	entity.update({
 		'id': id,
-		'name': name
+		'name': name,
+		'num_records': 0,
+		'average_delay': 0,
+		'last_updated': int(time.time())
 	})
-	datastore_client.put(entity)
+	print(datastore_client.put(entity))
 	
 def fetch_stops(limit):
 	query = datastore_client.query(kind='stop')
@@ -60,7 +74,7 @@ def getStops():
 	for i in range(1001, 1228):
 		try:
 			r = requests.get(getUrl("/v3/stops/"+str(i)+"/route_type/0"))
-			print(r.json())
+			#print(r.json())
 			store_stop(i, r.json()["stop"]["stop_name"])
 			sleep(1)
 		except:
@@ -79,6 +93,19 @@ def getStops():
 		# delay = expectedArrival - scheduledArrival
 		# return delay.total_seconds() / 60
 
+def updateStopInfo(stopid, service):
+	with datastore_client.transaction():
+		key = datastore_client.key('stop', str(stopid))
+		stop = datastore_client.get(key)
+		
+		
+		stop['average_delay'] = (stop['average_delay']*stop['num_records'] + getDelay(service))/(stop['num_records']+1)
+		stop['num_records'] = stop['num_records'] + 1
+		stop['last_updated'] = int(time.time())
+		print(stop)
+		datastore_client.put(stop)
+
+
 def storeService(stopid, routeid, scheduled, expected):
 	entity = datastore.Entity(key=datastore_client.key('past_service'))
 	entity.update({
@@ -87,7 +114,12 @@ def storeService(stopid, routeid, scheduled, expected):
 		'scheduled': scheduled,
 		'expected': expected
 	})
+	
 	print(datastore_client.put(entity))
+	
+	# Update average delay information for the stop.
+	updateStopInfo(stopid, entity)
+	
 	return entity
 
 #def extractTime(string):
@@ -101,7 +133,8 @@ def getNextServices(stopid):
 		storeService(stopid, routeid, scheduled, expected)
 
 def getDelay(service):
-	return int((service["expected"]-service["scheduled"])/60)
+	delay = int((service["expected"]-service["scheduled"])/60)
+	return delay
 
 def getDelays(stopid):
 	data = datastore_client.query(kind="past_service")
@@ -120,7 +153,7 @@ def getAverageDelay(stopid):
 	return 0
 
 def monitorServices():
-	stops = datastore_client.query(kind='stop').fetch()
+	stops = list(datastore_client.query(kind='stop').fetch())
 	
 	while True:
 		for i in stops:
@@ -147,11 +180,55 @@ app = Flask(__name__)
 @app.route('/')
 def hello():
 	stops = datastore_client.query(kind='stop').fetch()
-	avg_delays = {}
-	for i in stops:
-		avg_delays[i["name"]] = getAverageDelay(i["id"])
-	return render_template("index.html", stops=stops, avg_delays=avg_delays)
+	return render_template("index.html", stops=stops)
 
+@app.route('/stop/<stopid>')
+def viewStop(stopid):
+	stopid = int(stopid)
+	print(stopid)
+	
+	data = datastore_client.query(kind="stop")
+	data.add_filter("id", "=", stopid)
+	data = list(data.fetch(1))
+	
+	if not data:
+		return "Error 404 - Not found."
+	
+	print(data)
+	
+	station_name = data[0]["name"]
+	
+	services = datastore_client.query(kind='past_service')
+	services.add_filter("stopid", "=", stopid)
+	stopinfo = list(services.fetch())
+	
+	if not stopinfo:
+		return "No services found for " + station_name
+	
+	hours = {}
+		
+	for i in stopinfo:
+		departure = datetime.fromtimestamp(i["scheduled"])
+		departure = departure.replace(tzinfo=tz.tzutc())
+		departure = departure.astimezone(localtz)
+		departure_time = time(departure.hour)
+		print(departure_time)
+		try:
+			hours[departure_time].append(getDelay(i))
+		except KeyError:
+			hours[departure_time] = []
+			hours[departure_time].append(getDelay(i))
+		
+	
+	for i in hours.keys():
+		hours[i] = sum(hours[i])/len(hours[i])
+			
+	dateline = pygal.TimeLine(x_label_rotation=45, width=1024, height=768, explicit_size=True)
+	dateline.add("Delays logged", hours.items())
+	dateline = dateline.render()
+	
+	return render_template("stop.html", station_name=station_name, dateline=dateline)
+	
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App

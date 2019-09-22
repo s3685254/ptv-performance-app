@@ -4,5 +4,5 @@ Train Station{% endblock %}
 {% endblock %} {% block content %}
 <!-- key is station name, value is average delay time -->
 Station Name | Average Delay in Minutes<br />
-{% for key, value in avg_delays.items() %} {{ key }} | {{ value }}<br />
+{% for i in stops %} {{ i["name"] }} | {{ i["average_delay"] }}<br />
 {% endfor %} {% endblock %}

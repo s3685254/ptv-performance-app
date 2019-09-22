@@ -27,11 +27,7 @@ import hmac
 import binascii
 import threading
 
-
 datastore_client = datastore.Client()
-
-
-
 
 # PTV API STUFF
 def getUrl(request):

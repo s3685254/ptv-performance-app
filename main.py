@@ -224,7 +224,7 @@ def viewStop(stopid):
 		hours[i] = sum(hours[i])/len(hours[i])
 			
 	dateline = pygal.TimeLine(x_label_rotation=45, width=1024, height=768, explicit_size=True)
-	dateline.add("Delays logged", hours.items())
+	dateline.add("Delays logged", sorted(hours.items()))
 	dateline = dateline.render()
 	
 	return render_template("stop.html", station_name=station_name, dateline=dateline)

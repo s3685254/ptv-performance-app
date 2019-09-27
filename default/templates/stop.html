@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{%block head %} 
+	{% block title %}
+		{{station_name}} Station Reliability
+	{% endblock %}
+	<i class="fa fa-subway" style="font-size:48px"></i> <h2>{{station_name}}</h2>
+{{ super() }}
+{% endblock %} 
+
+{% block content %}
+	<i class="fa fa-clock-o" style="font-size:48px;">Trains typically run {% if current_hour_avg_delay==0 %}on time{% else %} {{current_hour_avg_delay}} minutes late at this station, {% endif %} at this time of day.</i>
+	<h2> By Line </h2>
+	<table>
+	  <thead>
+		<tr>
+		  <th scope="col">Line</th>
+		  <th scope="col">Average Delay</th>
+		  <th scope="col">Average Delay for this Hour</th>
+		</tr>
+	  </thead>
+	  <tbody>
+		  {% for i in routes %}
+		<tr>
+		  <th scope="row" style="background-color:{{i["colour"]}}; color: white;">{{i["name"]}}</th>
+		  <td>{{i["avg_delay"]}}</td>
+		  <td>{{i["current_hour_avg_delay"]}}</td>
+		</tr>
+		{% endfor %}
+	  </tbody>
+	</table>
+	
+	{{ dateline|safe }}
+{% endblock %}

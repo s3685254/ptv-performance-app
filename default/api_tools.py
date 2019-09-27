@@ -10,7 +10,7 @@ from time import sleep
 import time
 
 import requests
-from datetime import datetime, time
+from datetime import datetime
 from dateutil import tz
 from hashlib import sha1
 import hmac
@@ -47,17 +47,7 @@ def store_stop(id, name):
 		'last_updated': int(time.time())
 	})
 	print(datastore_client.put(entity))
-
-def store_stop_route(stopid, routeid):
-	key = datastore_client.key('route', str(stopid)+"-"+str(routeid))
-	entity = datastore.Entity(key)
-	entity.update({
-		'stopid': stopid,
-		'routeid': routeid
-	})
-	print(entity)
-	datastore_client.put(entity)
-
+	
 def fetch_stops(limit):
 	query = datastore_client.query(kind='stop')
 	stops = query.fetch(limit=limit)
@@ -72,19 +62,6 @@ def getStops():
 			sleep(1)
 		except:
 			pass
-			
-def getRoutes():
-	stops = list(datastore_client.query(kind='stop').fetch())
-	#print(stops)
-	try:
-		for i in stops:
-			r = requests.get(getUrl("/v3/departures/route_type/0/stop/"+str(i["id"])+"?max_results=1")).json()
-			for j in r["departures"]:
-				print(j["route_id"])
-				store_stop_route(i["id"], j["route_id"])
-	except:
-		pass
-	sleep(1)
 
 # class PastService(ndb.Model):
 	# stopid = ndb.IntegerProperty()
@@ -178,50 +155,3 @@ def monitorServices():
 				pass
 			sleep(5)
 
-def lookupService():
-	query = datastore_client.query(kind='stop')
-	query.order['last_updated']
-	stops = list(query.fetch(10))
-	for i in stops:
-		r = requests.get(getUrl("/v3/departures/route_type/0/stop/"+str(i["id"])+"?max_results=1")).json()
-		for j in r["departures"]:			
-			scheduled = datetime.strptime(j["scheduled_departure_utc"], "%Y-%m-%dT%H:%M:%SZ").timestamp()
-			estimated = datetime.strptime(j["estimated_departure_utc"], "%Y-%m-%dT%H:%M:%SZ").timestamp()
-			
-			s = storeService(i["id"], j["route_id"], int(scheduled), int(estimated))
-			
-		sleep(5)
-		
-def getRouteNames():
-	routeNames = {
-		1: 'Alamein',
-		2: 'Belgrave',
-		3: 'Cragieburn',
-		4: 'Cranbourne',
-		5: 'Mernda',
-		6: 'Frankston',
-		7: 'Glen Waverly',
-		8: 'Hurstbridge',
-		9: 'Lilydale',
-		11: 'Pakenham',
-		12: 'Sandringham',
-		13: 'Stony Point',
-		14: 'Sunbury',
-		15: 'Upfield',
-		16: 'Werribee',
-		17: 'Williamstown',
-		1482: 'Showgrounds-Flemington Racecourse Line'
-	}
-	
-	for i in routeNames.items():
-		print(i[0])
-		key = datastore_client.key('route_name', i[0])
-		entity = datastore.Entity(key=key)
-		entity.update({
-			'id': i[0],
-			'name': i[1]
-		})
-		print(entity)
-		datastore_client.put(entity)
-
-lookupService()

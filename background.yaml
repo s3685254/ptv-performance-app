@@ -1,0 +1,6 @@
+runtime: python37
+service: background
+
+handlers:
+- url: /monitor_services/*
+  script: bg_jobs.py

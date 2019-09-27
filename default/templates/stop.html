@@ -3,13 +3,20 @@
 	{% block title %}
 		{{station_name}} Station Reliability
 	{% endblock %}
-	<i class="fa fa-subway" style="font-size:48px"></i> <h2>{{station_name}}</h2>
+	<style>
+		.fa-subway{
+			color: white;
+		}
+	</style>
+	
+	<div style="background-color: Blue; display: table; padding: 5px; border-radius: 8px;"><i class="fa fa-subway" style="font-size:32px"></i> <h2 style="color: White; display: inline-block; padding-left: 10px;">{{station_name}}</h2><hr style="margin: 0px; padding-top:2px; padding-bottom: 8px; margin-left:-5px; margin-right: -5px; border-color: White;"></div>
 {{ super() }}
 {% endblock %} 
 
 {% block content %}
-	<i class="fa fa-clock-o" style="font-size:48px;">Trains typically run {% if current_hour_avg_delay==0 %}on time{% else %} {{current_hour_avg_delay}} minutes late at this station, {% endif %} at this time of day.</i>
-	<h2> By Line </h2>
+	<i class="fa fa-clock-o" style="font-size:32px;"></i><h3 style="display: inline-block;">Trains typically run {% if current_hour_avg_delay==0 %}on time{% else %} {{current_hour_avg_delay}} minutes late at this station, {% endif %} at this time of day.</h3>
+	
+	<h4> Punctuality by Line </h4>
 	<table>
 	  <thead>
 		<tr>

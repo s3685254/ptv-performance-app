@@ -89,9 +89,10 @@ def viewStop(stopid):
 			hours[departure_time].append(getDelay(i))
 			
 			
-			routes[i["routeid"]]["delays"].append(getDelay(i))
+			routes[i["routeid"]]["delays"].append(round(getDelay(i)))
+			print(datetime.now().hour)
 			if departure_time.hour==datetime.now().hour:
-				routes[i["routeid"]]["hour_delays"].append(getDelay(i))
+				routes[i["routeid"]]["hour_delays"].append(round(getDelay(i)))
 			
 		except KeyError:
 			hours[departure_time] = []

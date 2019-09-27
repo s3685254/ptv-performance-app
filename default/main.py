@@ -52,9 +52,7 @@ def viewStop(stopid):
 	
 	if not data:
 		return "Error 404 - Not found."
-	
-	print(data)
-	
+
 	station_name = data[0]["name"]
 	
 	services = datastore_client.query(kind='past_service')
@@ -64,6 +62,22 @@ def viewStop(stopid):
 	if not stopinfo:
 		return "No services found for " + station_name
 	
+	#get routes through station
+	routes = {}
+	
+	for i in stopinfo:
+		if i["routeid"] not in routes:
+			route_name = datastore_client.query(kind="route_name")
+			route_name.add_filter("id", "=", i["routeid"])
+			route_name = list(route_name.fetch(1))
+			route_name = route_name[0]
+			current_route = {}
+			current_route["name"] = route_name["name"]				
+			current_route["colour"] = route_name["colour"]
+			current_route["delays"] = []
+			current_route["hour_delays"] = []
+			routes[i["routeid"]] = current_route
+	
 	hours = {}
 		
 	for i in stopinfo:
@@ -71,9 +85,15 @@ def viewStop(stopid):
 		departure = departure.replace(tzinfo=tz.tzutc())
 		departure = departure.astimezone(localtz)
 		departure_time = time(departure.hour)
-		print(departure_time)
 		try:
 			hours[departure_time].append(getDelay(i))
+			
+			
+			routes[i["routeid"]]["delays"].append(round(getDelay(i)))
+			print(datetime.now().hour)
+			if departure_time.hour==datetime.now().hour:
+				routes[i["routeid"]]["hour_delays"].append(round(getDelay(i)))
+			
 		except KeyError:
 			hours[departure_time] = []
 			hours[departure_time].append(getDelay(i))
@@ -86,7 +106,24 @@ def viewStop(stopid):
 	dateline.add("Delays logged", sorted(hours.items()))
 	dateline = dateline.render()
 	
-	return render_template("stop.html", station_name=station_name, dateline=dateline)
+	for i in routes.keys():
+		try:
+			routes[i]["avg_delay"] = int(sum(routes[i]["delays"])/len(routes[i]["delays"]))
+			routes[i].pop('delays', None)
+		except ZeroDivisionError:
+			routes[i]["avg_delay"]=0
+		try:
+			routes[i]["current_hour_avg_delay"] = int(sum(routes[i]["hour_delays"])/len(routes[i]["hour_delays"]))
+			routes[i].pop('hour_delays', None)
+		except ZeroDivisionError:
+			routes[i]["current_hour_avg_delay"]=0
+	
+	routes = routes.values()
+	current_hour_avg_delay=0
+	for i in routes:
+		current_hour_avg_delay+=i["current_hour_avg_delay"]
+	current_hour_avg_delay/=len(routes)
+	return render_template("stop.html", station_name=station_name, dateline=dateline, routes=routes, current_hour_avg_delay=int(current_hour_avg_delay))
 
 @app.route("/monitor_services")
 def monitor_services():

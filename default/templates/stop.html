@@ -14,7 +14,7 @@
 {% endblock %} 
 
 {% block content %}
-	<i class="fa fa-clock-o" style="font-size:32px;"></i><h3 style="display: inline-block;">Trains typically run {% if current_hour_avg_delay==0 %}on time{% else %} {{current_hour_avg_delay}} minutes late at this station, {% endif %} at this time of day.</h3>
+	<i class="fa fa-clock-o" style="font-size:32px;"></i><h3 style="display: inline-block;">Trains typically run {% if current_hour_avg_delay==0 %}on time{% else %} {{current_hour_avg_delay}} minute{% if current_hour_avg_delay>1 %}s{% endif %} late at this station, {% endif %} at this time of day.</h3>
 	
 	<h4> Punctuality by Line </h4>
 	<table>

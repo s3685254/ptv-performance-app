@@ -2,21 +2,21 @@
 Train Station{% endblock %}
 {{ super() }}
 {% block content %}
-<div class="row">
-  {% for route, detail in route_name.items()  %}
-    <div class="col-lg-4 col-md-6 col-10" style="margin-bottom:10px;">
-      <div class="card card-default">
-        <h3>{{ detail[0] }}</h3>
-        <!-- key is station name, value is average delay time -->
-        Station Name | Average Delay in Minutes<br />
-        {% for count, stopid in routes.items()  %}
-          {% if stopid[0] == route %}
-            <a href="stop/{{ stopid[1][0] }}">{{ stopid[1][1] }}</a> | {{ stopid[1][2] | int | round}}<br />
-          {% endif %}
-        {% endfor %}
+<div class="index-body">
+  <div></div>
+  <div class="row">
+    {% for route, detail in route_name.items()  %}
+      <div class="col-lg-4 col-md-6 col-10 card-wrapper" style="margin-bottom:10px;">
+        <h3 class="station-name" style="background-color: {{ detail[1] }};">{{ detail[0] }}</h3>
+        <div class="card card-default line-card">
+          {% for count, stopid in routes.items()  %}
+            {% if stopid[0] == route %}
+              <a class="station-link" href="stop/{{ stopid[1][0] }}">{{ stopid[1][1] }}</a>: {{ stopid[1][2] | int | round}}<br />
+            {% endif %}
+          {% endfor %}
+        </div>
       </div>
-    </div>
-  {% endfor %}
+    {% endfor %}
+  </div>
 </div>
-
 {% endblock %}

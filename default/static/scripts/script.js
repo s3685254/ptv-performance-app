@@ -9,8 +9,9 @@ $(function() {
   $("#search-box").autocomplete({
     source: availableTags,
     select: function( event, ui ) {
-      console.log(ui.item.label)
-      window.location = $("a:contains("+ui.item.label+")").attr('href');
+      window.location = $("a").filter(function() {
+        return $(this).text() === ui.item.label;
+    }).attr('href');
   }
   });
 

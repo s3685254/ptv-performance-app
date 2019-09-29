@@ -1,5 +1,5 @@
-.station-link {
-  display: contents;
+.row {
+  padding: 5% 10%;
 }
 
 .card {
@@ -8,8 +8,8 @@
   padding: 10px 15px;
 }
 
-.row {
-  padding: 5% 10%;
+.station-link {
+  display: contents;
 }
 
 .station-name {
@@ -59,4 +59,8 @@
 .title-link:hover {
   color: black;
   text-decoration: none;
+}
+
+.stop-body {
+  padding: 5% 10%;
 }

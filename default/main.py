@@ -38,8 +38,29 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello():
-	stops = datastore_client.query(kind='stop').fetch()
-	return render_template("index.html", stops=stops)
+	# Fetch data from GCE Datastore
+	db_route_name = datastore_client.query(kind='route_name').fetch()
+	db_routes = datastore_client.query(kind='route').fetch()
+	db_stops = datastore_client.query(kind='stop').fetch()
+	
+	route_name = {}
+	for route in  db_route_name:
+		route_name[route["id"]] = [route["name"], route["colour"]]
+
+	routes = {}
+	count = 0
+	for item in db_routes:
+		routes[count] = [item["routeid"], [item["stopid"],"",0]]
+		count += 1
+	count = 0
+
+	for stop in db_stops:
+		for key, value in routes.items():
+			if value[1][0] == stop["id"]:
+				value[1][1] = stop["name"]
+				value[1][2] = stop["average_delay"]
+
+	return render_template("index.html", routes=routes, route_name=route_name)
 
 @app.route('/stop/<stopid>')
 def viewStop(stopid):

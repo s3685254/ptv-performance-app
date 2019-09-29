@@ -1,8 +1,22 @@
-{% extends "layout.html" %} {%block head %} {% block title %}Average Delays by
+{% extends "layout.html" %} {% block title %}Average Delays by
 Train Station{% endblock %}
 {{ super() }}
-{% endblock %} {% block content %}
-<!-- key is station name, value is average delay time -->
-Station Name | Average Delay in Minutes<br />
-{% for i in stops %} <a href="stop/{{i["id"]}}">{{i["name"] }}</a> | {{ i["average_delay"] | int | round}}<br />
-{% endfor %} {% endblock %}
+{% block content %}
+<div class="row">
+  {% for route, detail in route_name.items()  %}
+    <div class="col-lg-4 col-md-6 col-10" style="margin-bottom:10px;">
+      <div class="card card-default">
+        <h3>{{ detail[0] }}</h3>
+        <!-- key is station name, value is average delay time -->
+        Station Name | Average Delay in Minutes<br />
+        {% for count, stopid in routes.items()  %}
+          {% if stopid[0] == route %}
+            <a href="stop/{{ stopid[1][0] }}">{{ stopid[1][1] }}</a> | {{ stopid[1][2] | int | round}}<br />
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

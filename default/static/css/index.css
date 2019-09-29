@@ -2,9 +2,6 @@
   display: contents;
 }
 
-.card-title {
-}
-
 .card {
   height: 400px;
   overflow: scroll;

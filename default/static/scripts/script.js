@@ -13,4 +13,8 @@ $(function() {
       window.location = $("a:contains("+ui.item.label+")").attr('href');
   }
   });
+
+
+    $("h3:contains('Stony')").css("background-color", "grey");
+  
 });

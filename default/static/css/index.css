@@ -69,7 +69,6 @@
 
 /* Station logo */
 .station-logo {
-  background-color: Blue;
   display: table;
   padding: 5px;
   border-radius: 8px;
@@ -99,4 +98,9 @@
 
 .real-time-status {
   display: inline-block;
+}
+
+.deplay-graph {
+  background-color: #F9F9F9;
+  overflow: scroll;
 }

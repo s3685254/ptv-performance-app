@@ -5,7 +5,7 @@
 	{{ super() }}
 {% block content %}
 <div class="stop-body">
-		<div class="station-logo">
+		<div class="station-logo" style="background-color: blue">
 			<i class="fa fa-subway" style="font-size:25px; margin-left: 5px;"></i> <h3 class="station-logo-name">{{station_name}}</h3>
 			<hr class="hor-line">
 		</div>
@@ -15,26 +15,31 @@
 			<h3 class="real-time-status">Trains typically run {% if current_hour_avg_delay==0 %}on time{% else %} {{current_hour_avg_delay}} minute{% if current_hour_avg_delay>1 %}s{% endif %} late at this station, {% endif %} at this time of day.</h3>		
 		</div>
 	
-		<h4> Punctuality by Line </h4>
-		<table class="table">
-			<thead class="thead-dark">
-			<tr>
-				<th scope="col">Line</th>
-				<th scope="col">Average Delay</th>
-				<th scope="col">Average Delay for this Hour</th>
-			</tr>
-			</thead>
-			<tbody>
-				{% for i in routes %}
-			<tr>
-				<th scope="row" style="background-color:{{i["colour"]}}; color: white;">{{i["name"]}}</th>
-				<td>{{i["avg_delay"]}}</td>
-				<td>{{i["current_hour_avg_delay"]}}</td>
-			</tr>
-			{% endfor %}
-			</tbody>
-		</table>
-		{{ dateline | safe }}
+		<div class="punc-table">
+				<h4> Punctuality by Line </h4>
+				<table class="table">
+					<thead class="thead-dark">
+					<tr>
+						<th scope="col">Line</th>
+						<th scope="col">Average Delay</th>
+						<th scope="col">Average Delay for this Hour</th>
+					</tr>
+					</thead>
+					<tbody>
+						{% for i in routes %}
+					<tr>
+						<th scope="row" style="background-color:{{i["colour"]}}; color: white;">{{i["name"]}}</th>
+						<td>{{i["avg_delay"]}}</td>
+						<td>{{i["current_hour_avg_delay"]}}</td>
+					</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+		</div>
+
+		<div class="deplay-graph">
+				{{ dateline | safe }}
+		</div>
 </div>
 
 {% endblock %}

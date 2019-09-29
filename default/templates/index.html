@@ -3,7 +3,9 @@ Train Station{% endblock %}
 {{ super() }}
 {% block content %}
 <div class="index-body">
-  <div></div>
+  <div class="search-box-wrapper">
+    <input id="search-box" placeholder="Search a station">
+  </div>
   <div class="row">
     {% for route, detail in route_name.items()  %}
       <div class="col-lg-4 col-md-6 col-10 card-wrapper" style="margin-bottom:10px;">

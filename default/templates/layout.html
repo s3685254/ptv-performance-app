@@ -7,12 +7,13 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
+    {% block head %}
+    <!-- CSS file -->
     <link
       href="{{ url_for('static', filename='css/index.css') }}"
       rel="stylesheet"
       type="text/css"
     />
-    {% block head %}
     <!-- Bootstrap CSS -->
     <link
       rel="stylesheet"
@@ -27,20 +28,20 @@
       integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
       crossorigin="anonymous"
     />
+    <!-- Title -->
     <title>{% block title %}{% endblock %} - PTV</title>
     {% endblock %}
   </head>
   <body>
     <div class="top-area">
       <div class="title">
-        <h1>PTV Train Line Delay Infos</h1>
+        <a href="/" class="title-link">PTV Train Line Delay Infos</a>
       </div>
     </div>
     <div id="content">{% block content %}{% endblock %}</div>
     <div id="footer">
       {% block footer %} &copy; Copyright 2019 by
-      <a href="http://domain.invalid/">Daniel Dao and Jye Lake</a>. {% endblock
-      %}
+      <a href="#" target="_blank">Daniel Dao and Jye Lake</a>. {% endblock %}
     </div>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -58,6 +59,16 @@
       src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
       integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
       crossorigin="anonymous"
+    ></script>
+    <!-- JQueryUI -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="/resources/demos/style.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <!-- Script -->
+    <script
+      type="text/javascript"
+      src="{{ url_for('static', filename='scripts/script.js') }}"
     ></script>
   </body>
 </html>

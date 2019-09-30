@@ -10,7 +10,7 @@
 			<hr class="hor-line">
 		</div>
 
-		<div class="real-time-status-wrapper alert {{'alert-primary' if current_hour_avg_delay==0 else 'alert-danger' if current_hour_avg_delay == 2 else 'alert-warning'}}" role="alert">
+		<div class="real-time-status-wrapper alert {{'alert-primary' if current_hour_avg_delay==0 else 'alert-danger' if current_hour_avg_delay > 1 else 'alert-warning'}}" role="alert">
 			<i class="fa fa-clock-o" style="font-size:32px;"></i>
 			<h3 class="real-time-status">Trains typically run {% if current_hour_avg_delay==0 %}on time{% else %} {{current_hour_avg_delay}} minute{% if current_hour_avg_delay>1 %}s{% endif %} late at this station, {% endif %} at this time of day.</h3>		
 		</div>

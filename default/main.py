@@ -1,17 +1,3 @@
-# Copyright 2018 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START gae_python37_app]
 from api_tools import getDelay, getDelays, getAverageDelay, getUrl, storeService
 
@@ -24,6 +10,7 @@ from pytz import timezone
 from datetime import datetime, time
 from dateutil import tz
 import pygal
+from pygal.style import Style
 from google.cloud import datastore
 import requests
 from time import sleep
@@ -62,10 +49,33 @@ def hello():
 
 	return render_template("index.html", routes=routes, route_name=route_name)
 
+def configureLineGraph(routes):
+	# Configure chart styling (line colours)
+	chart_colours = []
+	for i in routes.keys():
+		chart_colours.append(routes[i]["colour"])	
+	custom_style = Style(
+		colors=tuple(chart_colours)
+	)
+		
+	# Create graph + configure labels.
+	chart = pygal.TimeLine(x_label_rotation=45, width=1024, height=768, explicit_size=True,
+	 style=custom_style, title="Average Delay at this Station by Hour (by line)",
+	  x_title='Time of Day', y_title="Average service delay in minutes.",
+	  x_value_formatter=lambda dt: dt.strftime('%I:%M %p'))
+	  
+	 # x-axis labels config
+	hours=[]
+	for i in range(0,23):
+		hour = datetime.today().replace(hour=i, minute=0, second=0)
+		hours.append(hour)
+	chart.x_labels = hours
+	
+	return chart
+
 @app.route('/stop/<stopid>')
 def viewStop(stopid):
 	stopid = int(stopid)
-	print(stopid)
 	
 	data = datastore_client.query(kind="stop")
 	data.add_filter("id", "=", stopid)
@@ -96,55 +106,58 @@ def viewStop(stopid):
 			current_route["name"] = route_name["name"]				
 			current_route["colour"] = route_name["colour"]
 			current_route["delays"] = []
-			current_route["hour_delays"] = []
+			current_route["hour_delays"] = {}
+			current_route["hour_avg_delays"] = {}
 			routes[i["routeid"]] = current_route
+			
 	
-	hours = {}
-		
+	# Get service info for calculating average delays.
 	for i in stopinfo:
 		departure = datetime.fromtimestamp(i["scheduled"])
 		departure = departure.replace(tzinfo=tz.tzutc())
 		departure = departure.astimezone(localtz)
 		departure_time = time(departure.hour)
-		try:
-			hours[departure_time].append(getDelay(i))
-			
-			
-			routes[i["routeid"]]["delays"].append(round(getDelay(i)))
-			
-			if departure_time.hour==datetime.now().hour:
-				print(datetime.now().hour)
-				routes[i["routeid"]]["hour_delays"].append(round(getDelay(i)))
+		try:			
+			routes[i["routeid"]]["delays"].append(getDelay(i))
+			routes[i["routeid"]]["hour_delays"][departure_time].append(getDelay(i))
 			
 		except KeyError:
-			hours[departure_time] = []
-			hours[departure_time].append(getDelay(i))
-		
-	
-	for i in hours.keys():
-		hours[i] = sum(hours[i])/len(hours[i])
-			
-	dateline = pygal.TimeLine(x_label_rotation=45, width=1024, height=768, explicit_size=True)
-	dateline.add("Delays logged", sorted(hours.items()))
-	dateline = dateline.render()
+			routes[i["routeid"]]["hour_delays"][departure_time] = []
+			routes[i["routeid"]]["hour_delays"][departure_time].append(getDelay(i))
 	
 	for i in routes.keys():
+		for j in routes[i]["hour_delays"].keys():
+			routes[i]["hour_avg_delays"][j] = sum(routes[i]["hour_delays"][j])/len(routes[i]["hour_delays"][j])
+	
+	# Create graph.
+	dateline = configureLineGraph(routes)
+	
+	# Add data series
+	for i in routes.keys():
+		dateline.add(routes[i]["name"], sorted(routes[i]["hour_avg_delays"].items()))
+	dateline = dateline.render(disable_xml_declaration=True)
+	
+	# Calculate average delays for table format.
+	for i in routes.keys():
 		try:
-			routes[i]["avg_delay"] = int(sum(routes[i]["delays"])/len(routes[i]["delays"]))
+			routes[i]["avg_delay"] = sum(routes[i]["delays"])/len(routes[i]["delays"])
 			routes[i].pop('delays', None)
 		except ZeroDivisionError:
 			routes[i]["avg_delay"]=0
 		try:
-			routes[i]["current_hour_avg_delay"] = int(sum(routes[i]["hour_delays"])/len(routes[i]["hour_delays"]))
+			routes[i]["current_hour_avg_delay"] = routes[i]["hour_avg_delays"][time(datetime.now().hour)]
 			routes[i].pop('hour_delays', None)
-		except ZeroDivisionError:
+		except (ZeroDivisionError, KeyError):
 			routes[i]["current_hour_avg_delay"]=0
 	
+	# Calculate average delay for current period (hour).
 	routes = routes.values()
 	current_hour_avg_delay=0
 	for i in routes:
 		current_hour_avg_delay+=i["current_hour_avg_delay"]
 	current_hour_avg_delay/=len(routes)
+	
+	# Render the page as html.
 	return render_template("stop.html", station_name=station_name, dateline=dateline, routes=routes, current_hour_avg_delay=int(current_hour_avg_delay))
 
 @app.route("/monitor_services")
@@ -167,9 +180,6 @@ def monitor_services():
 	return "monitoring complete!"
 
 if __name__ == '__main__':
-    # This is used when running locally only. When deploying to Google App
-    # Engine, a webserver process such as Gunicorn will serve the app. This
-    # can be configured by adding an `entrypoint` to app.yaml.
 	
 	#getStops()
 	

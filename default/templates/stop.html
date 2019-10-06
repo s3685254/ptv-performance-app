@@ -21,23 +21,23 @@
 					<thead class="thead-dark">
 					<tr>
 						<th scope="col">Line</th>
-						<th scope="col">Average Delay</th>
-						<th scope="col">Average Delay for this Hour</th>
+						<th scope="col">Average Delay (mins)</th>
+						<th scope="col">Average Delay for this Hour (mins)</th>
 					</tr>
 					</thead>
 					<tbody>
 						{% for i in routes %}
 					<tr>
 						<th scope="row" style="background-color:{{i["colour"]}}; color: white;">{{i["name"]}}</th>
-						<td>{{i["avg_delay"]}}</td>
-						<td>{{i["current_hour_avg_delay"]}}</td>
+						<td>{{i["avg_delay"] | int | round}}</td>
+						<td>{{i["current_hour_avg_delay"] | int | round}}</td>
 					</tr>
 					{% endfor %}
 					</tbody>
 				</table>
 		</div>
 
-		<div class="deplay-graph">
+		<div class="delay-graph">
 				{{ dateline | safe }}
 		</div>
 </div>

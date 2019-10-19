@@ -97,34 +97,42 @@ def viewStop(stopid):
 	routes = {}
 	
 	for i in stopinfo:
-		if i["routeid"] not in routes:
-			route_name = datastore_client.query(kind="route_name")
-			route_name.add_filter("id", "=", i["routeid"])
-			route_name = list(route_name.fetch(1))
-			route_name = route_name[0]
-			current_route = {}
-			current_route["name"] = route_name["name"]				
-			current_route["colour"] = route_name["colour"]
-			current_route["delays"] = []
-			current_route["hour_delays"] = {}
-			current_route["hour_avg_delays"] = {}
-			routes[i["routeid"]] = current_route
-			
-	
+		try:
+			if i["routeid"] not in routes:
+				route_name = datastore_client.query(kind="route_name")
+				route_name.add_filter("id", "=", i["routeid"])
+				route_name = list(route_name.fetch(1))
+				route_name = route_name[0]
+				current_route = {}
+				current_route["name"] = route_name["name"]				
+				current_route["colour"] = route_name["colour"]
+				current_route["delays"] = []
+				current_route["hour_delays"] = {}
+				current_route["hour_avg_delays"] = {}
+				routes[i["routeid"]] = current_route
+		except IndexError:
+			pass
+
+		
+
 	# Get service info for calculating average delays.
 	for i in stopinfo:
-		departure = datetime.fromtimestamp(i["scheduled"])
-		departure = departure.replace(tzinfo=tz.tzutc())
-		departure = departure.astimezone(localtz)
-		departure_time = time(departure.hour)
-		try:			
-			routes[i["routeid"]]["delays"].append(getDelay(i))
-			routes[i["routeid"]]["hour_delays"][departure_time].append(getDelay(i))
-			
-		except KeyError:
-			routes[i["routeid"]]["hour_delays"][departure_time] = []
-			routes[i["routeid"]]["hour_delays"][departure_time].append(getDelay(i))
+		try:
+			departure = datetime.fromtimestamp(i["scheduled"])
+			departure = departure.replace(tzinfo=tz.tzutc())
+			departure = departure.astimezone(localtz)
+			departure_time = time(departure.hour)
+			try:			
+				routes[i["routeid"]]["delays"].append(getDelay(i))
+				routes[i["routeid"]]["hour_delays"][departure_time].append(getDelay(i))
+				
+			except KeyError:
+				routes[i["routeid"]]["hour_delays"][departure_time] = []
+				routes[i["routeid"]]["hour_delays"][departure_time].append(getDelay(i))
+		except Exception:
+			pass
 	
+
 	for i in routes.keys():
 		for j in routes[i]["hour_delays"].keys():
 			routes[i]["hour_avg_delays"][j] = sum(routes[i]["hour_delays"][j])/len(routes[i]["hour_delays"][j])

@@ -6,7 +6,7 @@ This is a webapp that displays data about average delays at each station across 
 virtualenv -p python3 venv
 source venv/bin/activate
 pip install -r requirements.txt
-cd webapp
+cd default
 python main.py
 ```
 ## Monitoring Service

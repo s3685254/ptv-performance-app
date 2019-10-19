@@ -1,6 +1,6 @@
 This is a webapp that displays data about average delays at each station across the Melbourne Metropolitan Train Network, sourcing data from the Public Transport Victoria (PTV) public API (version 3).
 
-##Webapp
+## Webapp
 <i>In order to run the web app locally via the webserver:</i>
 ```bash
 virtualenv -p python3 venv
@@ -9,14 +9,14 @@ pip install -r requirements.txt
 cd webapp
 python main.py
 ```
-##Monitoring Service
+## Monitoring Service
 In order to run the python script that harvests train punctuality data and populates the google cloud database, run the following in a bash shell from the root directory:
 ```bash
 cd background && python api_tools.py
 ```
 
-##Deployment to Google Cloud
-###Google App Engine
+## Deployment to Google Cloud
+### Google App Engine
 1. Create a Google Cloud Project.
 2. Navigate to 'Storage' in the google cloud console.
 3. Navigate to 'Transfer' in the sidebar in the left-hand side of the page.

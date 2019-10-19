@@ -8,6 +8,7 @@ You can access our webapp (a demo) online here: https://ptv-reliability-app.apps
 virtualenv -p python3 venv
 source venv/bin/activate
 pip install -r requirements.txt
+export GOOGLE_APPLICATION_CREDENTIALS="<path_to_project_code_folder>/Assignment2-4b88333398c7.json"
 cd default
 python main.py
 ```

@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "ptv-reliability-app",
+  "private_key_id": "4b88333398c77abe746ab9c46186d772d6b0fe21",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDrAixoC7AYrnls\neL/fWoWI9g21X2njhwh3YzHYfSjkb066Q2R2TaPmJVHPpTlK8SKjkPknxCLQxwzx\nj5Bnc2B1QcolwPGbIfyGKpkYrcpgKUvQUBUyPW/2zerECOS/ZVtQwRrbLA6G5Omp\nGosYf6p01btzFdK5DQXaZA99YN0JnfQ5tIyNSR/7b2ovfiCiR+dEqNz92ylCcL5N\nVWfzk+K1KwmUWDtNP/N1yFLmlialBS3h6NvsWvXLXcIH6rOe6Hha7gi2TPTKP4Xk\nscLGuBIWuQhNRn+qm5a7TEtlJhYZrPrOodobRVERI8+o7T4tO4TvSANjzKidrmQk\neLj6B1ZBAgMBAAECggEAByWBBhkq5C+nSiAbtGlYJVIKmMdVKahHnq40/xbpRi8U\n8NwC41UZMZlVCFBty/FflgoSOMsbKu51EcISbsIgfthYeYO8fsHB4EhncPIIaDQa\n4qbfMIpG2OjD2NPGm9DNF6LTrZjeO5+c9AZ2XReblNasdV0gLbGJCfsTSU/UUPBx\njSa3i5vYYMHVZmlisFGaCbKtZA58CW+sZL0fj7P78DALSE7JoCSkPOZeaayduW42\nT7X0XfhyD7LTiaR59OtgDcYZC9Umn/tmZD0wNzYXPA3pPL5XrKcE443QDeWoelgf\nl/IFZKLoUn4MSPIk3mKgMy7L4P/v4Jt4sjAzZYrHNQKBgQD9CpaxtHer97pwUWRJ\nF2hqlmZu0ydVNbdop6j4zV9Dj+qRf08QrZ99f1v8+za3Wt/HtYDjLCHVN1nLwlTG\ndHBEzja0k5/ASkx7qTrqtf6Y0zlGQLMf0xyCDYAB2amJBmYi+zNnhj//XTbQr8ea\nbnlQee5OVI5fF4DBgTCe6Y6YvQKBgQDtwZu2nrUUZNdpzvID3vjmi4yyXvKG55sw\ndWEsdad48NuzofVzfalkBNJnD/V3v6mxlcyzZwR6DyU+8q/UO9aze3vlu5f1QHii\nX4lO+WCcTmR02TDUWwUinpbHeo4LCs+/59Pu5dSR+WWYyIyzrQux1WoQcPzHerA1\nBx2V+9HV1QKBgBcsixSHRJZ5P5fdvGN9Q1DPqV3o9Kc3Hi71e+IdXOYhHghpMmKC\npCKoMVJ/50jvh6MQmlczyX1vbkfc6kqqi0Wh5RywkGbZ5xtEKmMoe8KfRZWLg1wc\nx3WZqumAd6hW76+wdcq7Xs0SSlzeXFdmWrHmGM8Pq2JGEsKmBD/pf+e5AoGAfEc0\nrsvc2ZEwrKU5Cl71+gS+AcrxuSS9kSH6LnQ9m1FDdm1VUQ5Bif+fP7Iu3G56NFKa\nUriptWfPT00qLaUtwFnu1JIvh0oxBKctrfNa1bmAdzfEd2wwjf0Z0aG1N/5pw+VZ\necn3SGp1+dvy+ESfFVD6BSgaaecuzjku9ORRthUCgYEA+AMRhrR++ch7LJ/8vIZU\nkxSJeC4fC48mxhOWtuqzeleD9duR7trXmW1BLhNFJ6JSKvo249lZlkY3R5nDoKxW\nH5YF7Pk+Iq8PBhdmFFYQ+IVinRwbc4B6nLXIKdikyOT6ny8Gf7tKA406IE8p7WV6\nXkRZe2vSCjkC2mM0JZLhQw4=\n-----END PRIVATE KEY-----\n",
+  "client_email": "end-users@ptv-reliability-app.iam.gserviceaccount.com",
+  "client_id": "117638224543735834836",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/end-users%40ptv-reliability-app.iam.gserviceaccount.com"
+}
